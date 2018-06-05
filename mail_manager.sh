@@ -40,52 +40,52 @@ error_message ()
     echo "================================="
 }
 #=========================================================================================
-    clear
-    echo --------------------------------------------------
-    echo Welcome to UAPI Suspend Mail
-    echo This is still in beta version
-    echo Talk to Dan.D for further question
-    echo --------------------------------------------------
-    echo
-    echo "Enter the domain"
-    read domain
-    if [ -z "$domain" ]
+clear
+echo --------------------------------------------------
+echo Welcome to UAPI Suspend Mail
+echo This is still in beta version
+echo Talk to Dan.D for further question
+echo --------------------------------------------------
+echo
+echo "Enter the domain"
+read domain
+if [ -z "$domain" ]
     then
         clear
         echo "!Domain must not be empty"
     else
-        find_domain="$(grep $domain /etc/localdomains)"
-        if [ -z "$find_domain" ]
-        then
-            error_message "DOMAIN NOT FOUND ON SERVER"
-        else
-            clear
-            username="$(/scripts/whoowns $domain)"
-            echo "Enter what you want to execute"
-            options=("Suspend Specific Mail" "Activate Specific Mail" "Suspend all outgoing" "Activate all outgoing" "Quit")
-            select opt in "${options[@]}"
-            do
-                case $opt in
-                    "Suspend Specific Mail")
-                    clear
-                    echo "Enter usermail"
-                    read usrmail
-                    validate_mail="$(ls -lah /home*/$username/mail/ | grep $domain/$usrmail)"
-                    if [ -z "$validate_mail" ]
-                        then
-                            error_message "$usrmail@$domain not found"
-                            break
-                        else
-                            echo "Enter Reason"
-                            read reason
-                            if [ -z "$reason" ]
-                                then
-                                    error_message "Must input a reason"
-                                    break
-                                else
-                                    mail_api "${username}" "suspend_login" "$usrmail@$domain" "SUSPENDED" "$domain" "$reason"
-                                    break
-                                fi
+    find_domain="$(grep $domain /etc/localdomains)"
+    if [ -z "$find_domain" ]
+    then
+        error_message "DOMAIN NOT FOUND ON SERVER"
+    else
+        clear
+        username="$(/scripts/whoowns $domain)"
+        echo "Enter what you want to execute"
+        options=("Suspend Specific Mail" "Activate Specific Mail" "Suspend all outgoing" "Activate all outgoing" "Quit")
+        select opt in "${options[@]}"
+        do
+            case $opt in
+                "Suspend Specific Mail")
+                clear
+                echo "Enter usermail"
+                read usrmail
+                validate_mail="$(ls -lah /home*/$username/mail/ | grep $domain/$usrmail)"
+                if [ -z "$validate_mail" ]
+                    then
+                        error_message "$usrmail@$domain not found"
+                        break
+                    else
+                        echo "Enter Reason"
+                        read reason
+                        if [ -z "$reason" ]
+                            then
+                                error_message "Must input a reason"
+                                break
+                            else
+                                mail_api "${username}" "suspend_login" "$usrmail@$domain" "SUSPENDED" "$domain" "$reason"
+                                break
+                            fi
                         fi
                         ;;
                         "Activate Specific Mail")
@@ -102,7 +102,7 @@ error_message ()
                             break
                         fi
                         ;;
-                    *) echo invalid option;;
+                *) echo invalid option;;
             esac
         done
     fi
